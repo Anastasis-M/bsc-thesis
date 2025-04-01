@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model cards {
+  id                Int         @id @default(autoincrement())
+  product_id        Int
+  store_id          Int
+  category_id       Int
+  product_name      String      @db.VarChar(200)
+  store_name        String      @db.VarChar(200)
+  image_cover_path  String?     @db.VarChar(200)
+  average_rating    Float?      @db.Real
+  average_price     Float?      @db.Real
+  number_of_reviews Int?
+  review_ids        Int[]
+  created_at        DateTime    @default(now()) @db.Timestamp(6)
+  categories        categories  @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  products          products    @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  stores            stores      @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  favorites         favorites[]
+
+  @@unique([product_id, store_id])
+  @@index([id], map: "cards_id_index")
+}
+
+model categories {
+  id       Int        @id @default(autoincrement())
+  name     String     @db.VarChar(100)
+  cards    cards[]
+  products products[]
+}
+
+model favorites {
+  id      Int   @id @default(autoincrement())
+  user_id Int
+  card_id Int
+  cards   cards @relation(fields: [card_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users   users @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([card_id], map: "favorites_card_id_index")
+}
+
+model images {
+  id         Int     @id @default(autoincrement())
+  review_id  Int
+  image_path String  @db.VarChar(200)
+  reviews    reviews @relation(fields: [review_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model products {
+  id         Int        @id @default(autoincrement())
+  name       String     @db.VarChar(200)
+  category   Int
+  cards      cards[]
+  categories categories @relation(fields: [category], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reviews    reviews[]
+
+  @@index([name], map: "products_name_index")
+  @@index([id], map: "products_product_id_index")
+}
+
+model reviews {
+  id            Int      @id @default(autoincrement())
+  user_id       Int
+  product_id    Int
+  store_id      Int
+  price         Float    @db.Real
+  rating        Int
+  review_text   String
+  review_date   DateTime @default(now()) @db.Timestamp(6)
+  helpful_votes Int      @default(0)
+  total_votes   Int      @default(0)
+  images        images[]
+  products      products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  stores        stores   @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users         users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "reviews_review_id_index")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spatial_ref_sys {
+  srid      Int     @id
+  auth_name String? @db.VarChar(256)
+  auth_srid Int?
+  srtext    String? @db.VarChar(2048)
+  proj4text String? @db.VarChar(2048)
+}
+
+model stores {
+  id       Int                  @id @default(autoincrement())
+  name     String               @db.VarChar(200)
+  address  String               @db.VarChar(255)
+  position Unsupported("point")
+  maps_id  String               @db.VarChar
+  cards    cards[]
+  reviews  reviews[]
+
+  @@index([id], map: "stores_store_id_index")
+}
+
+model tokens {
+  token_value String @id @db.VarChar(255)
+  user_id     Int
+  users       users  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  id                   Int         @id @default(autoincrement())
+  email                String      @unique @db.VarChar(100)
+  password             String      @db.VarChar(100)
+  role                 String      @db.VarChar(50)
+  display_name         String      @db.VarChar(100)
+  number_of_reviews    Int         @default(0)
+  helpful_review_score Int         @default(0)
+  helpful_ratio        Float       @default(0.0) @db.Real
+  liked_reviews_ids    Int[]
+  disliked_reviews_ids Int[]
+  favorites            favorites[]
+  reviews              reviews[]
+  tokens               tokens[]
+
+  @@index([id], map: "users_user_id_index")
+}

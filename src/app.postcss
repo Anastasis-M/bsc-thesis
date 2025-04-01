@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+html,
+body {
+	@apply h-full overflow-hidden;
+	min-width: 360px;
+	background-color: hsla(348, 81%, 44%, 1);
+	background-image:
+		radial-gradient(at 32% 72%, hsla(65,81%,75%,1) 0px, transparent 50%),
+		radial-gradient(at 15% 44%, hsla(357,79%,62%,1) 0px, transparent 50%),
+		radial-gradient(at 91% 48%, hsla(328,83%,78%,1) 0px, transparent 50%),
+		radial-gradient(at 42% 40%, hsla(45,66%,77%,1) 0px, transparent 50%),
+		radial-gradient(at 60% 67%, hsla(193,82%,74%,1) 0px, transparent 50%);
+	background-attachment: fixed;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.dark body{
+	background-color: hsla(348, 71%, 34%, 1);
+}
