@@ -36,3 +36,6 @@ This thesis presents the development of a product review web platform that enabl
 ![Homepage-mobile](https://github.com/user-attachments/assets/86c3613d-061f-45dc-81ac-01ee6b1229db)
 #### Product mobile
 ![Product mobile](https://github.com/user-attachments/assets/ad558b7e-b6a2-416b-8d5e-9ac1fae12652)
+
+## Complete document
+[PDF](https://dione.lib.unipi.gr/xmlui/bitstream/handle/unipi/16903/Anastasios_20124.pdf?sequence=1&isAllowed=y)
